@@ -12,7 +12,7 @@
     let recognition;
     let transcript;
     let isRecording = false;
-    let instructions = 'Not Listening';
+
     onMount(() => {
         try {
             let SpeechRecognition =
@@ -26,7 +26,6 @@
                 transcript = event.results[current][0].transcript;
 
                 if (transcript.trim() === 'stop') {
-                    console.log('stopping');
                     recognition.stop();
                     isRecording = false;
                 }
@@ -38,11 +37,6 @@
 
             recognition.onstart = function () {
                 isRecording = true;
-                instructions = 'Recording';
-            }
-
-            recognition.onspeechend = function () {
-                instructions = 'Stopped';
             }
         } catch (e) {
             console.error(e);
