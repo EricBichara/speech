@@ -109,7 +109,7 @@
         inversion = inversions[Math.floor(Math.random() * inversions.length)];
     }
 </script>
-<div class="mx-auto max-w-lg pt-10 px-4 md:px-0">
+<div class="mx-auto max-w-lg pt-2 px-4 md:px-0">
 
     <div class="flex flex-col items-center my-10">
         <div class="text-4xl mb-2 font-bold">{key}</div>
