@@ -1,5 +1,6 @@
 <script lang="ts">
     import {onMount} from "svelte";
+    import isMobile from "ismobilejs";
 
     const keys = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
     const inversions = ['Root Inversion', '1st Inversion', '2nd Inversion'];
@@ -38,9 +39,13 @@
     let transcript;
     let isRecording = false;
 
+    let enableListening = false;
+
     $: count = parseInt(countValue);
 
     onMount(() => {
+        enableListening = !isMobile().any;
+
         type = types[0];
         try {
             let SpeechRecognition =
@@ -117,26 +122,32 @@
         <div class="text-4xl font-bold">{inversion}</div>
     </div>
 
-    <div class="flex tooltip" data-tip="Get Next Chord">
-        <button class="btn btn-active flex-1" disabled={intervalId} on:click={doAtInterval}>Next</button>
-    </div>
+    <button class="w-full btn btn-active flex-1 drop-shadow-lg border-1" disabled={intervalId} on:click={doAtInterval}>
+        Next
+    </button>
 
     <div class="flex flex-row items-center justify-center gap-3 mt-4">
-        <button class="btn btn-primary flex-1" disabled={isRecording} on:click={startInterval}>Start</button>
+        <button class="btn btn-primary flex-1 drop-shadow-lg border-1" disabled={intervalId != null}
+                on:click={startInterval}>Start
+        </button>
         <div class="flex-1 flex border-2 bg-white drop-shadow-lg rounded-full h-12 justify-center items-center">
             <div class="font-bold">{count}</div>
         </div>
-        <button class="btn btn-accent flex-1" disabled={isRecording} on:click={stopInterval}>Stop</button>
+        <button class="btn btn-accent flex-1 drop-shadow-lg border-1" disabled={isRecording || intervalId == null}
+                on:click={stopInterval}>Stop
+        </button>
     </div>
 
-    <div class="flex mt-4 tooltip"
-         data-tip="When listening say 'Next' to go to the next chord or 'Stop' to stop listening">
-        <button class="btn flex-1"
-                disabled={intervalId}
-                class:btn-error={!isRecording}
-                class:btn-primary={isRecording}
-                on:click={toggle}>{!isRecording ? 'Start Listening' : 'Stop Listening'}</button>
-    </div>
+    {#if enableListening}
+        <div class="flex mt-4 tooltip"
+             data-tip="When listening say 'Next' to go to the next chord or 'Stop' to stop listening">
+            <button class="btn flex-1 drop-shadow-lg border-1"
+                    disabled={intervalId}
+                    class:btn-error={!isRecording}
+                    class:btn-primary={isRecording}
+                    on:click={toggle}>{!isRecording ? 'Start Listening' : 'Stop Listening'}</button>
+        </div>
+    {/if}
 
     <div class="mt-4 font-bold">Settings</div>
     <div class="flex flex-col">
@@ -168,7 +179,7 @@
             <label class="label cursor-pointer">
                 <span class="label-text">Count down (in seconds)</span>
                 <input type="text" bind:value={countValue} class="input input-bordered w-14 bg-white h-10 text-end"
-                disabled={intervalId}/>
+                       disabled={intervalId}/>
             </label>
         </div>
     </div>
